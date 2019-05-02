@@ -1,5 +1,6 @@
 <%@ page language="java" contentType="text/html; charset=EUC-KR"
     pageEncoding="EUC-KR"%>
+    
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
     
 
@@ -29,8 +30,8 @@
 	<tr>
 		<td>구매방법</td>
 		<td>
-		<c:if test="${! empty purchase.paymentOption && purchase.paymentOption=='0'}">현금구매</c:if>
-		<c:if test="${! empty purchase.paymentOption && purchase.paymentOption=='1'}">신용구매</c:if>
+		<c:if test="${purchase.paymentOption eq 0}">현금 구매</c:if>
+		<c:if test="${purchase.paymentOption eq 1} ">신용 구매</c:if>
 		</td>
 		<td></td>
 	</tr>

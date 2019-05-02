@@ -120,7 +120,6 @@ function fncGetProductList(currentPage){
 			<td align="left">${product.regDate }</td>		
 			<td></td>
 			<td align="left">
-
 				<c:if test="${empty product.proTranCode }">판매중</c:if>
 				<c:if test="${! empty product.proTranCode && empty user }">재고없음</c:if>
 				

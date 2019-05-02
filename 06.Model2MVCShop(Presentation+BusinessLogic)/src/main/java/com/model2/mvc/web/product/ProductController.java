@@ -119,7 +119,7 @@ public class ProductController {
 	}
 
 	@RequestMapping("/listProduct.do")
-	public String listProduct(@ModelAttribute("search") Search search, Model model, HttpServletRequest request)
+	public String listProduct(@ModelAttribute("search") Search search, Model model)
 			throws Exception {
 
 		System.out.println("/listProduct.do");
@@ -135,6 +135,7 @@ public class ProductController {
 		Page resultPage = new Page(search.getCurrentPage(), ((Integer) map.get("totalCount")).intValue(), pageUnit,
 				pageSize);
 		System.out.println(resultPage);
+		
 
 		// Model °ú View ¿¬°á
 		model.addAttribute("list", map.get("list"));
