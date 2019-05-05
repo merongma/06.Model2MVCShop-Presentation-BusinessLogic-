@@ -61,9 +61,9 @@ public class PurchaseController {
 	public String addPurchaseView(@RequestParam("prodNo") int prodNo, Model model) throws Exception {
 
 		System.out.println("/addPurchaseView.do");
-		
+
 		Product product = productService.getProduct(prodNo);
-	
+
 		model.addAttribute("product", product);
 
 		System.out.println(product);
@@ -97,14 +97,11 @@ public class PurchaseController {
 
 		System.out.println("/getPurchase.do");
 
-
 		Purchase purchase = purchaseService.getPurchase(tranNo);
 
 		model.addAttribute("purchase", purchase);
 
-
 		purchase.setPaymentOption(purchase.getPaymentOption().trim());
-
 
 		return "forward:/purchase/getPurchaseView.jsp";
 
@@ -161,7 +158,7 @@ public class PurchaseController {
 		System.out.println("/updatePurchaseView.do");
 
 		purchase = purchaseService.getPurchase(tranNo);
-		
+
 		model.addAttribute("purchase", purchase);
 
 		return "forward:/purchase/updatePurchaseView.jsp";
@@ -169,13 +166,11 @@ public class PurchaseController {
 	}
 
 	@RequestMapping("/updateTranCodeByProd.do")
-	public String updateTranCodeByProd(@RequestParam("tranCode") String tranCode, @RequestParam("prodNo") int prodNo)
+	public String updateTranCodeByProd(@RequestParam("tranCode") String tranCode, @RequestParam("prodNo") int prodNo,
+			@ModelAttribute("Purchase") Purchase purchase, @ModelAttribute("Product") Product product)
 			throws Exception {
 
 		System.out.println("/updateTranCodeByProd.do");
-
-		Purchase purchase = new Purchase();
-		Product product = new Product();
 
 		product.setProdNo(prodNo);
 
@@ -189,14 +184,12 @@ public class PurchaseController {
 
 	@RequestMapping("/updateTranCode.do")
 	public String updateTranCode(@RequestParam("tranCode") String tranCode, @RequestParam("tranNo") int tranNo,
-			Model model) throws Exception {
+			@ModelAttribute("Product") Product product) throws Exception {
 
 		System.out.println("/updateTranCode.do");
-		
+
 		Purchase purchase = purchaseService.getPurchase(tranNo);
-//		model.addAttribute("purchase", purchase);
-		
-		Product product = new Product();
+
 		product.setProdNo(purchase.getPurchaseProd().getProdNo());
 
 		purchase.setTranCode(tranCode);

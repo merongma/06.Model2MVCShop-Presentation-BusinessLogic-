@@ -1,8 +1,11 @@
 package com.model2.mvc.web.product;
 
+import java.io.PrintWriter;
 import java.util.Map;
 
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -63,7 +66,8 @@ public class ProductController {
 	}
 
 	@RequestMapping("/getProduct.do")
-	public String getProduct(@RequestParam("prodNo") int prodNo, Model model, @RequestParam("menu") String menu) throws Exception {
+	public String getProduct(@RequestParam("prodNo") int prodNo, Model model, @RequestParam("menu") String menu,
+			HttpServletRequest request, HttpServletResponse response) throws Exception {
 
 		System.out.println("/getProduct.do");
 		// Business Logic
@@ -71,8 +75,35 @@ public class ProductController {
 		// Model 과 View 연결
 		model.addAttribute("product", product);
 
-		
-		System.out.println("menu값"+menu);
+		request.setCharacterEncoding("EUC_KR");
+		response.setContentType("text/html;charset=EUC-KR");
+		PrintWriter out = response.getWriter();
+
+		Cookie cookieBox[] = request.getCookies();
+		Cookie cookie = null;
+
+		if (cookieBox != null) {
+			for (int i = 0; i < cookieBox.length; i++) {
+				if (cookieBox[i].getName().equals("history")) {
+					cookie = new Cookie("history", cookieBox[i].getValue() + "," + prodNo);
+					break;
+				}
+			}
+		} else {
+			cookie = new Cookie("history", String.valueOf(prodNo));
+		}
+
+		if (cookie == null) {
+			cookie = new Cookie("history", String.valueOf(prodNo));
+		}
+
+		cookie.setMaxAge(-1);
+		cookie.setPath("/");
+
+		System.out.println("쿠키값 확인 " + cookie.getValue());
+		response.addCookie(cookie);
+
+		System.out.println("menu값" + menu);
 		if (menu.equals("manage")) {
 
 			return "forward:/product/updateProductView.jsp";
@@ -97,30 +128,29 @@ public class ProductController {
 	}
 
 	@RequestMapping("/updateProduct.do")
-	public String updateProduct(@ModelAttribute("product") Product product, Model model, HttpSession session, @RequestParam("prodNo") int prodNo)
-			throws Exception {
+	public String updateProduct(@ModelAttribute("product") Product product, Model model, HttpSession session,
+			@RequestParam("prodNo") int prodNo) throws Exception {
 
 		System.out.println("/updateProduct.do");
-		
+
 		productService.updateProduct(product);
-		System.out.println("prodNo 값 확인 : "+prodNo);
-		
-		Product product2 =productService.getProduct(prodNo);
+		System.out.println("prodNo 값 확인 : " + prodNo);
+
+		Product product2 = productService.getProduct(prodNo);
 		product.setRegDate(product2.getRegDate());
-		
-		model.addAttribute("product",product);
-		
+
+		model.addAttribute("product", product);
+
 //		session.setAttribute("product", product);
-			
-		System.out.println("리턴되기 전 product 값 :"+product);
+
+		System.out.println("리턴되기 전 product 값 :" + product);
 
 		return "forward:/product/updateProduct.jsp";
 
 	}
 
 	@RequestMapping("/listProduct.do")
-	public String listProduct(@ModelAttribute("search") Search search, Model model)
-			throws Exception {
+	public String listProduct(@ModelAttribute("search") Search search, Model model) throws Exception {
 
 		System.out.println("/listProduct.do");
 
@@ -135,7 +165,6 @@ public class ProductController {
 		Page resultPage = new Page(search.getCurrentPage(), ((Integer) map.get("totalCount")).intValue(), pageUnit,
 				pageSize);
 		System.out.println(resultPage);
-		
 
 		// Model 과 View 연결
 		model.addAttribute("list", map.get("list"));
